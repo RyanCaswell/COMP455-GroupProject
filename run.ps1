@@ -1,0 +1,1 @@
+python ingest.py | python mapper.py | sort | python reducer.py
