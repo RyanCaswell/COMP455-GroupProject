@@ -1,4 +1,4 @@
 pyarrow
-pandas
+pandas<3.0
 ipykernel
 pyspark
