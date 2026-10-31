@@ -1,3 +1,6 @@
+import tracker
+tracker.track( "reducer" )
+
 import sys
 
 cur_key = ""

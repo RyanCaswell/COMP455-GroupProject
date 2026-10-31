@@ -1,3 +1,6 @@
+import tracker
+tracker.track( "mapper" )
+
 import sys
 import json
 
