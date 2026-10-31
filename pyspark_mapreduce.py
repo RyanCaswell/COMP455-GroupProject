@@ -1,3 +1,6 @@
+import tracker
+tracker.track( "all-in-one" )
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import sum, col
 import time
