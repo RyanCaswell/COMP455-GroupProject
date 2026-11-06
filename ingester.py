@@ -1,6 +1,3 @@
-import tracker
-tracker.track( "ingester" )
-
 import pandas as pd
 import json
 import argparse
