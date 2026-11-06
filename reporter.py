@@ -16,10 +16,10 @@ stages["t_start"] = ( stages["start"] - runStart ).round( 1 )
 stages["t_end"] = ( stages["end"] - runStart ).round( 1 )
 stages = stages.sort_values( [ "run", "start" ] )
 
-print( stages[ [ "run", "stage", "procs", "bytes_in", "bytes_out", "seconds", "t_start", "t_end" ] ].to_string( index=False ) )
+print( stages[ [ "run", "stage", "procs", "bytes_in", "bytes_out", "seconds", "t_start", "t_end" ] ].to_string( index=False, formatters={ "bytes_in": "{:,}".format, "bytes_out": "{:,}".format } ) )
 
 print()
 for run, group in stages.groupby( "run" ):
     elapsed = group["end"].max() - group["start"].min()
     traffic = group[ group["stage"] != "reducer" ][ "bytes_out"].sum()
-    print( f"{run} - elapsed: {elapsed:.3f} seconds, total traffic: {traffic} bytes" )
+    print( f"{run} - elapsed: {elapsed:.3f} seconds, total traffic: {traffic:,} bytes" )
