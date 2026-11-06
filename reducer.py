@@ -3,8 +3,8 @@ tracker.track( "reducer" )
 
 import sys
 
-def print_output( key, sum, count ):
-    average = sum / count
+def print_output( key, total, count ):
+    average = total / count
     print( f"{key},{average:.1%}|{count}" )
 
 cur_key = ""
