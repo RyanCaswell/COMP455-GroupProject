@@ -11,16 +11,16 @@ DATA_FILE = "data/yellow_tripdata_2026-01.parquet"
 CHUNK_SIZE=50000
 
 COLUMNS = [
-    #"tpep_pickup_datetime",
+    "tpep_pickup_datetime",
     #"tpep_dropoff_datetime",
     #"passenger_count",
     #"trip_distance",
-    #"PULocationID",
-    #"DOLocationID",
+    "PULocationID",
+    "DOLocationID",
     #"fare_amount",
     "tip_amount",
-    #"total_amount",
-    "Airport_fee",
+    "total_amount",
+    #"Airport_fee",
 ]
 
 def main( limit = None ):
