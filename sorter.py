@@ -1,6 +1,3 @@
-import tracker
-tracker.track( "sorter" )
-
 import sys
 from operator import itemgetter
 
