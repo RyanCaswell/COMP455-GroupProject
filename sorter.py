@@ -2,9 +2,14 @@ import tracker
 tracker.track( "sorter" )
 
 import sys
+from operator import itemgetter
+
+
 
 lines = list( sys.stdin )    # reads through the counter, one line at a time
-lines.sort()
 
-for line in lines:
-    sys.stdout.write( line )
+# Sort, up to tab
+lines.sort( key = lambda line: line.partition("\t")[0] ) # Does this help?
+
+# Write to reducer
+sys.stdout.write( "".join( lines ) )
