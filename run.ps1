@@ -29,13 +29,13 @@ Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python splitter.py -m 4 < log.jsonl"
 
 
-$env:MAPPER_ENCODE = "True"
+$env:MAPPER_ENCODE = "False"
 
 $env:RUN_NAME = "single mapper - reducer encode - sort reducer"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python mapper.py < log.jsonl | python sorter.py | python reducer.py"
 
-$env:RUN_NAME = "single mapper - reducer encode encode - dict reducer"
+$env:RUN_NAME = "single mapper - reducer encode - dict reducer"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python mapper.py < log.jsonl | python reducerDict.py"
 
