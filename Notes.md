@@ -13,7 +13,6 @@ https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
   * Does the pickup date effect how much they are tipped? (Do we tip more during busier days like holidays etc.)
   * compare time and space complexitys of python based MapReduced vs PySparks
 
-
 * Where should we clean data? Multiple points?
   * Ingest?
   * Beginning of mapper?
@@ -23,3 +22,7 @@ https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 * Multiple datasets?
   * Just create loop in ingest, with a list of datasets?
     * Create list from what datasets are in data folder?
+
+## Report Notes
+
+* Code is not ment to be a perfect benchmark, but more as a demonstration of the pros and cons of each system.

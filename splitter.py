@@ -18,12 +18,19 @@ parser.add_argument(
     help="Use dictionary-based reducer"
 )
 
+parser.add_argument(
+    "--combiner",
+    action="store_true",
+    help="Use a combiner for each mapper"
+)
+
 args = parser.parse_args()
 
 mapper_count = args.mappers
 output_batch = 5000
 input_batch = 500
 reducer_dict = args.dict
+use_combiner = args.combiner
 
 # Start Sorter
 if reducer_dict:
@@ -32,7 +39,7 @@ if reducer_dict:
     # Start Reducer
     reducer = subprocess.Popen(
         [sys.executable, "reducerDict.py"],
-        stdin=sorter.stdout,
+        stdin=subprocess.PIPE,
         text=True
     )
 
@@ -51,7 +58,7 @@ else:
         text=True
     )
 
-sorter.stdout.close()
+    sorter.stdout.close()
 
 # Start Mappers
 mappers = [
@@ -64,18 +71,45 @@ mappers = [
     for _ in range( mapper_count )
 ]
 
+# Mapper to Combiner links
+local_pipe = []
+
+if use_combiner:
+    for _ in range( mapper_count ):
+        local_sorter = subprocess.Popen(
+            [sys.executable, "sorter.py"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            text=True
+        )
+
+        combiner = subprocess.Popen(
+            [sys.executable, "combiner.py"],
+            stdin=local_sorter.stdout,
+            stdout=subprocess.PIPE,
+            text=True
+        )
+
+        local_sorter.stdout.close()
+
+        local_pipe.append( ( local_sorter, combiner ) )
+
 write_lock = threading.Lock()
 
 # Read mapper's output
-def forward_output( mapper ):
+def forward_output( index, mapper ):
     batch = []
 
-    # Iterate over mapper output
+    # Select mapper output target (combiner or reducer)
+    if use_combiner:
+        local_sorter, combiner = local_pipe[ index ]
+        target = local_sorter.stdin
+    else:
+        target = reducer.stdin if reducer_dict else sorter.stdin
+
+    # Connect mapper output
     for line in mapper.stdout:
         batch.append( line )
-
-        # Set where to send mapper output
-        target = reducer.stdin if reducer_dict else sorter.stdin
 
         # If enough records, flush to output
         if len( batch ) >= output_batch:
@@ -92,9 +126,42 @@ def forward_output( mapper ):
 
     mapper.stdout.close()
 
+    # Local combiner
+    if use_combiner:
+        local_sorter.stdin.close()
+
+        target = reducer.stdin if reducer_dict else sorter.stdin
+        
+        batch = []
+
+        for line in combiner.stdout:
+            batch.append( line )
+
+            if len( batch ) >= output_batch:
+                with write_lock: # TODO: Needed?
+                    target.write( "".join( batch ) )
+                    target.flush()
+                batch.clear()
+
+        if batch:
+            with write_lock: # TODO: Needed?
+                target.write( "".join( batch ) )
+                target.flush()
+
+        combiner.stdout.close()
+
+        local_sorter.wait()
+        combiner.wait()
+
+    # Remote reducer
+    else:
+        if not reducer_dict:
+            with write_lock:
+                target.flush()
+
 threads = [
-    threading.Thread( target=forward_output, args=( mapper, ) )
-    for mapper in mappers
+    threading.Thread( target=forward_output, args=( i, mapper ) )
+    for i, mapper in enumerate( mappers )
 ]
 
 for thread in threads:
@@ -135,9 +202,8 @@ for thread in threads:
 # Close sorter input
 if sorter:
     sorter.stdin.close()
-
-# Wait for sorter and reducer
-if sorter:
     sorter.wait()
+else:
+    reducer.stdin.close()
 
 reducer.wait()
