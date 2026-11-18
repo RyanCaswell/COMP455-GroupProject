@@ -51,7 +51,7 @@ for line in sys.stdin:
     try:
         data = line.strip().split( "," )
 
-        # Quality checks
+        # Quality - Ensure there are 5 values
         if len( data ) != 5:
             print( f"Error reading CSV - {len( data )} index, should be 5", file=sys.stderr )
             continue
@@ -62,6 +62,10 @@ for line in sys.stdin:
         date = data[0]
         total = data[4]
         tip = data[3]
+
+        # Quality - Ensure payments are not negative
+        if total <= 0 or tip < 0:
+            continue
 
         hour = int( date[11:13] ) // 6
 
