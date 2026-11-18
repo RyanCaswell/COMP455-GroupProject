@@ -14,7 +14,7 @@ cmd /c "python mapper.py < log.jsonl | python sorter.py | python reducer.py"
 
 $env:RUN_NAME = "single mapper - mapper encode encode - dict reducer"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
-cmd /c "python mapper.py < log.jsonl | python reducerDict.py"
+cmd /c "python mapper.py < log.jsonl | python reducer.py --dict"
 
 $env:RUN_NAME = "1 mappers - mapper encode - sort reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
@@ -37,7 +37,7 @@ cmd /c "python mapper.py < log.jsonl | python sorter.py | python reducer.py"
 
 $env:RUN_NAME = "single mapper - reducer encode - dict reducer"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
-cmd /c "python mapper.py < log.jsonl | python reducerDict.py"
+cmd /c "python mapper.py < log.jsonl | python reducer.py --dict"
 
 $env:RUN_NAME = "1 mappers - reducer encode - sort reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan

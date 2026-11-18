@@ -38,7 +38,7 @@ if reducer_dict:
 
     # Start Reducer
     reducer = subprocess.Popen(
-        [sys.executable, "reducerDict.py"],
+        [sys.executable, "reducer.py", "--dict"],
         stdin=subprocess.PIPE,
         text=True
     )
