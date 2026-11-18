@@ -10,7 +10,13 @@ cur_total = 0.0
 # Loop through each line of input
 for line in sys.stdin:
     # Extract error code and quantity
-    key, value = line.strip().split( '\t' )
+    parts = line.strip().split( '\t' )
+
+    if len( parts ) != 2:
+        print( f"Invalid input - {line}", file=sys.stderr )
+        continue
+
+    key, value = parts
 
     tip, total = value.split( '|' )
     

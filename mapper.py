@@ -2,7 +2,6 @@ import tracker
 tracker.track( "mapper" )
 
 import sys
-import json
 import os
 from datetime import datetime
 
@@ -50,16 +49,21 @@ def get_value( tip, total ):
 # Read input, one line at a time
 for line in sys.stdin:
     try:
-        record = json.loads( line )
+        data = line.strip().split( "," )
 
-        depart = record["PULocationID"]
-        arrive = record["DOLocationID"]
+        # Quality checks
+        if len( data ) != 5:
+            print( f"Error reading CSV - {len( data )} index, should be 5", file=sys.stderr )
+            continue
 
-        date = datetime.fromisoformat( record["tpep_pickup_datetime"] ) # Could be switched to index number
-        total = record["total_amount"]
-        tip = record["tip_amount"]
+        depart = int( data[1] )
+        arrive = int( data[2] )
 
-        hour = date.hour // 6
+        date = data[0]
+        total = data[4]
+        tip = data[3]
+
+        hour = int( date[11:13] ) // 6
 
         if MAPPER_ENCODE:
             hour = BUCKETS[hour]
@@ -68,10 +72,8 @@ for line in sys.stdin:
         value = get_value( tip, total )
 
         if value:
-            print(
-                f"{airport}\t{value}\n"
-                f"T|{hour}\t{value}"
-            )
+            print( f"{airport}\t{value}" )
+            print( f"T|{hour}\t{value}" )
 
-    except ( json.JSONDecodeError, KeyError, TypeError, ValueError ) as e:
-        print( f"Error reading JSON - {e}", file=sys.stderr )
+    except ( TypeError, ValueError ) as e:
+        print( f"Error reading CSV - {e}", file=sys.stderr )

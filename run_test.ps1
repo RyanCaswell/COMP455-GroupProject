@@ -1,16 +1,16 @@
 Remove-Item metrics.json -ErrorAction SilentlyContinue
 
 # Create Log if needed
-if (-not (Test-Path log.jsonl)) {
+if (-not (Test-Path log.txt)) {
     Write-Host "`nLog file not found, generating..." -ForegroundColor Cyan
-    cmd /c "python ingester.py > log.jsonl"
+    cmd /c "python ingester.py > log.txt"
 }
 
 $env:MAPPER_ENCODE = "True"
 
 $env:RUN_NAME = "4 mappers - mapper encode - sort reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
-cmd /c "python splitter.py -m 4 --combiner < log.jsonl"
+cmd /c "python splitter.py -m 1 --combiner < log.txt"
 
 # Clean up environment variable
 Remove-Item Env:RUN_NAME

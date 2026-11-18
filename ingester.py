@@ -1,5 +1,4 @@
 import pandas as pd
-import json
 import argparse
 import sys
 
@@ -27,17 +26,19 @@ def main( limit = None ):
     if limit is not None:
         data = data.head( limit )
 
-    # Send each record to standard output
-    # for record in data.to_dict( orient="records" ):
-    #     print( json.dumps( record, default=str ) )
+    chunk = []
 
-    for i in range( 0, len( data ), CHUNK_SIZE ):
-        chunk = data.iloc[ i : i + CHUNK_SIZE ]
-        text = chunk.to_json( orient="records", lines=True, date_format="iso" )
-        if not text.endswith( "\n" ):
-            text += "\n"
-        sys.stdout.write( text )
+    for i, row in enumerate( data.itertuples( index=False ) ):
+        text = f"{row.tpep_pickup_datetime},{row.PULocationID},{row.DOLocationID},{row.tip_amount},{row.total_amount}\n"
 
+        chunk.append( text )
+
+        if i + 1 % CHUNK_SIZE == 0:
+            sys.stdout.write( "".join( chunk ) )
+            chunk = []
+
+    if chunk:
+        sys.stdout.write( "".join( chunk ) )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
