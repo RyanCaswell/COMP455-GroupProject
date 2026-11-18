@@ -56,12 +56,24 @@ def track( stage: str ):
     stdin = sys.stdin = Counter( sys.stdin )
     stdout = sys.stdout = Counter( sys.stdout )
 
+    # External file input/output
+    external = {
+        "bytes_in": 0,
+        "bytes_out": 0,
+    }
+
+    def add_input(value):
+        external["bytes_in"] += value
+
+    def add_output(value):
+        external["bytes_out"] += value
+
     def save():
         record = {
             "run": RUN_NAME,
             "stage": stage,
-            "bytes_in": stdin.bytes,
-            "bytes_out": stdout.bytes,
+            "bytes_in": stdin.bytes + external["bytes_in"],
+            "bytes_out": stdout.bytes + external["bytes_out"],
             "seconds": round( time.perf_counter() - start, 3 ),
             "start": startWall,
             "end": time.time(),
@@ -71,3 +83,8 @@ def track( stage: str ):
             file.write( json.dumps( record ) + "\n" )
 
     atexit.register( save )
+
+    return {
+        "add_input": add_input,
+        "add_output": add_output,
+    }
