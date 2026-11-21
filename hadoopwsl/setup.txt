@@ -1,0 +1,105 @@
+Make sure you are using WSL 2.0 you can check by running
+
+POWERSHELL "wsl -l -v"
+now enter wsl, i recommend ubuntu (any version they recommend on there website is fine)
+
+Now in WSl follow these steps
+1. make sure python and java are installed
+    sudo apt update
+    sudo apt install -y openjdk-17-jdk python3
+    java -version
+    python3 --version
+
+2. Download Haddop we will be using hadoop 3.5 (latest 2026 Apr2 )
+
+    cd ~
+    wget https://archive.apache.org/dist/hadoop/common/hadoop-3.5.0/hadoop-3.5.0.tar.gz
+    tar -xzf hadoop-3.5.0.tar.gz
+    mv hadoop-3.5.0 hadoop
+
+OR
+
+    #https://www.apache.org/dyn/closer.lua/hadoop/common/hadoop-3.5.0/hadoop-3.5.0.tar.gz
+extract to home/
+
+3. we need to setup hadoop to be reconized. We can see if we running
+    wner@Owner:~$ hadoop version
+    hadoop: command not found
+
+#point haddop at java
+    echo 'export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))' >> ~/.bashrc
+
+#set hadoops home
+    echo 'export HADOOP_HOME=$HOME/hadoop' >> ~/.bashrc
+
+#add hadoop to path
+    echo 'export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin' >> ~/.bashrc
+
+#reload bash (or repoen wsl)
+    source ~/.bashrc
+
+We need to edit haddops env files for the jobs to run
+    nano $HOME/hadoop/etc/hadoop/hadoop-env.sh
+    add : export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 
+    anywhere near the top
+
+
+# ensure both of these run (the directorys dont have to match for java as long as its java 17)
+    wner@Owner:~$ hadoop version
+    Hadoop 3.5.0
+    Source code repository https://github.com/apache/hadoop.git -r dbcc7cd797100e6b32cd84f85b53a5193a5f9af0
+    Compiled by cnauroth on 2026-03-24T16:56Z
+    Compiled on platform linux-x86_64
+    Compiled with protoc 3.25.5
+    From source with checksum 64582ed0a62a169c39a19c734a8f33b5
+    This command was run using /home/wner/hadoop/share/hadoop/common/hadoop-common-3.5.0.jar
+
+    wner@Owner:/mnt/c/Users/OwnerPC/Desktop/COMP455/COMP455-GroupProject$ echo $JAVA_HOME
+    /usr/lib/jvm/java-17-openjdk-amd64E
+
+4. Simple test
+   echo $JAVA_HOME must print /usr/lib/jvm/java-17-openjdk-amd64.
+   mkdir -p ~/hadoop-test/input
+   printf 'hello world\nhello hadoop\n' > ~/hadoop-test/input/words.txt
+   rm -rf ~/hadoop-test/output
+   hadoop jar $HOME/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.5.0.jar wordcount ~/hadoop-test/input ~/hadoop-test/output
+   cat ~/hadoop-test/output/part-r-00000
+
+# We MUST remove the output folder for hadoop otherwise it will refuse to run. IT WILL NEVER OVERWRITE its previous output automatically.
+
+
+5. make sure pandas and pyarrow are install for wsl
+# create a python3 vertuall enviorment
+    python3 -m venv "$HOME/comp455-venv"
+#install the dependancys there
+    "$HOME/comp455-venv/bin/pip" install pandas pyarrow
+
+6. Open the folder CONMP455-GroupProject/hadoopwsl in the windows file explored. right click on a empty space and click
+open in terminal.   Type "wsl" into it. This will open the folder in wsl
+
+The shell is now in the hadoopwsl directory we can now run the haddop job:
+
+    rm -rf /tmp/hadoop-out
+   "$HOME/comp455-venv/bin/python" ingester.py > /tmp/trips.csv
+   hadoop jar $HOME/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
+     -files mapper.py,reducer.py,tracker.py \
+     -mapper "/usr/bin/python3 mapper.py" \
+     -reducer "/usr/bin/python3 reducer.py" \
+     -cmdenv MAPPER_ENCODE=True \
+     -input /tmp/trips.csv \
+     -output /tmp/hadoop-out
+   cat /tmp/hadoop-out/part-*
+
+This times it (just using linux time) and saves the output results
+
+rm -rf /tmp/hadoop-out
+/usr/bin/time -f "elapsed_seconds %e" -o /tmp/hadoop-time.txt \
+  hadoop jar $HOME/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar \
+    -files mapper.py,reducer.py,tracker.py \
+    -mapper "/usr/bin/python3 mapper.py" \
+    -reducer "/usr/bin/python3 reducer.py" \
+    -cmdenv MAPPER_ENCODE=True \
+    -input /tmp/trips.csv \
+    -output /tmp/hadoop-out \
+  2>&1 | tee /tmp/hadoop-console.txt
+cp /tmp/hadoop-console.txt /tmp/hadoop-time.txt /tmp/hadoop-out/
