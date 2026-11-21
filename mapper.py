@@ -60,8 +60,8 @@ for line in sys.stdin:
         arrive = int( data[2] )
 
         date = data[0]
-        total = data[4]
-        tip = data[3]
+        tip = float(data[3])
+        total = float(data[4])
 
         # Quality - Ensure payments are not negative
         if total <= 0 or tip < 0:
