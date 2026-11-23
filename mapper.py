@@ -41,20 +41,19 @@ for line in sys.stdin:
 
         # Quality - Ensure there are 5 values
         if len( data ) != 5:
-            print( f"Error reading CSV - {len( data )} index, should be 5", file=sys.stderr )
             continue
 
-        total = data[4]
-        tip = data[3]
+        total = float( data[4] )
+        tip = float( data[3] )
 
         # Quality - Ensure payments are not negative
         if total <= 0 or tip < 0 or tip > total:
-            print( f"Invalid payment - Total: {total} Tip: {tip}", file=sys.stderr )
             continue
 
         date = data[0]
         hour = int( date[11:13] ) // 6
 
+        # Quality - Ensure valid time window
         if hour not in [ 0, 1, 2, 3 ]:
             print( f"Invalid hour - {hour}", file=sys.stderr )
             hour = None
@@ -65,11 +64,12 @@ for line in sys.stdin:
         depart = int( data[1] )
         arrive = int( data[2] )
 
+        # Quality - Ensure valid loctionIDs
         if not arrive or arrive > 265 or arrive < 1:
             print( f"Invalid locationID - {arrive}", file=sys.stderr )
             continue
 
-        if not depart or depart > 265 or arrive < 1:
+        if not depart or depart > 265 or depart < 1:
             print( f"Invalid locationID - {depart}", file=sys.stderr )
             continue
 
