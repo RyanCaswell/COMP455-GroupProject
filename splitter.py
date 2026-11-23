@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 mapper_count = args.mappers
 output_batch = 5000
-input_batch = 500
+input_batch = 5000
 reducer_dict = args.dict
 use_combiner = args.combiner
 
