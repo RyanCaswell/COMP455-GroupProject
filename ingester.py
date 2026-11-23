@@ -33,7 +33,7 @@ def main( limit = None ):
 
         chunk.append( text )
 
-        if i + 1 % CHUNK_SIZE == 0:
+        if (i + 1) % CHUNK_SIZE == 0:
             sys.stdout.write( "".join( chunk ) )
             chunk = []
 

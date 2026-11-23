@@ -1,0 +1,18 @@
+A|JFK Airport,12.5%	
+A|LaGuardia Airport,14.2%	
+A|Newark Airport,12.0%	
+B|JFK Airport|JFK Airport,9.3%	
+B|JFK Airport|LaGuardia Airport,9.2%	
+B|JFK Airport|Newark Airport,8.5%	
+B|LaGuardia Airport|JFK Airport,11.6%	
+B|LaGuardia Airport|LaGuardia Airport,10.7%	
+B|LaGuardia Airport|Newark Airport,8.5%	
+B|Newark Airport|Newark Airport,10.1%	
+D|JFK Airport,11.4%	
+D|LaGuardia Airport,13.6%	
+D|Newark Airport,8.0%	
+N|None,8.0%	
+T|Afternoon (12-18),9.9%	
+T|Evening (18-24),8.9%	
+T|Morning (06-12),8.2%	
+T|Night (00-06),6.3%	
