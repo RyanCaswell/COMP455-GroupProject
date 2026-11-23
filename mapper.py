@@ -3,22 +3,10 @@ tracker.track( "mapper" )
 
 import sys
 import os
-from datetime import datetime
+
+from encode import BUCKETS, AIRPORT_NAMES
 
 MAPPER_ENCODE = os.environ.get( "MAPPER_ENCODE", "True" ) == "True"
-
-AIRPORT_NAMES = {
-        1: "Newark Airport",
-        132: "JFK Airport",
-        138: "LaGuardia Airport",
-    }
-
-BUCKETS = [
-            "Night (00-06)",
-            "Morning (06-12)",
-            "Afternoon (12-18)",
-            "Evening (18-24)"
-        ]
 
 def get_airport( depart, arrive ):
     # Check if an airport
@@ -56,28 +44,34 @@ for line in sys.stdin:
             print( f"Error reading CSV - {len( data )} index, should be 5", file=sys.stderr )
             continue
 
-        depart = int( data[1] )
-        arrive = int( data[2] )
-
-        date = data[0]
         total = data[4]
         tip = data[3]
 
         # Quality - Ensure payments are not negative
         if total <= 0 or tip < 0:
+            print( f"Invalid payment - Total: {total} Tip: {tip}", file=sys.stderr )
             continue
 
+        date = data[0]
         hour = int( date[11:13] ) // 6
+
+        if hour not in [ 0, 1, 2, 3 ]:
+            print( f"Invalid hour - {hour}", file=sys.stderr )
+            hour = None
 
         if MAPPER_ENCODE:
             hour = BUCKETS[hour]
 
+        depart = int( data[1] )
+        arrive = int( data[2] )
+
         airport = get_airport( depart, arrive )
         value = get_value( tip, total )
 
-        if value:
-            print( f"{airport}\t{value}" )
-            print( f"T|{hour}\t{value}" )
+        if airport:
+            print( f"{airport}\t{tip}|{total}" )
+        if hour:
+            print( f"T|{hour}\t{tip}|{total}" )
 
     except ( TypeError, ValueError ) as e:
         print( f"Error reading CSV - {e}", file=sys.stderr )

@@ -5,6 +5,8 @@ import sys
 import os
 import argparse
 
+from encode import BUCKETS, AIRPORT_NAMES
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--dict",
@@ -14,19 +16,6 @@ parser.add_argument(
 args = parser.parse_args()
 
 MAPPER_ENCODE = os.environ.get( "MAPPER_ENCODE", "True" ) == "True"
-
-AIRPORT_NAMES = {
-        "1": "Newark Airport",
-        "132": "JFK Airport",
-        "138": "LaGuardia Airport",
-    }
-
-BUCKETS = [
-            "Night (00-06)",
-            "Morning (06-12)",
-            "Afternoon (12-18)",
-            "Evening (18-24)"
-        ]
 
 def print_output( key, tip, total ):
     average = tip / total
