@@ -1,7 +1,7 @@
 AIRPORT_NAMES = {
-        "1": "Newark Airport",
-        "132": "JFK Airport",
-        "138": "LaGuardia Airport",
+        1: "Newark Airport",
+        132: "JFK Airport",
+        138: "LaGuardia Airport",
     }
 
 BUCKETS = [

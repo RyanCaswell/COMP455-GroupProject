@@ -31,8 +31,8 @@ def print_output( key, tip, total ):
             key = "N|None"
 
         elif code == "B":
-            depart = AIRPORT_NAMES.get( parts[1] )
-            arrive = AIRPORT_NAMES.get( parts[2] )
+            depart = AIRPORT_NAMES.get( int( parts[1] ) )
+            arrive = AIRPORT_NAMES.get( int( parts[2] ) )
             key = f"B|{depart}|{arrive}"
 
         elif code == "A" or code == "D":
