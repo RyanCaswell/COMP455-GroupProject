@@ -48,7 +48,7 @@ for line in sys.stdin:
         tip = data[3]
 
         # Quality - Ensure payments are not negative
-        if total <= 0 or tip < 0:
+        if total <= 0 or tip < 0 or tip > total:
             print( f"Invalid payment - Total: {total} Tip: {tip}", file=sys.stderr )
             continue
 
@@ -64,6 +64,14 @@ for line in sys.stdin:
 
         depart = int( data[1] )
         arrive = int( data[2] )
+
+        if not arrive or arrive > 265 or arrive < 1:
+            print( f"Invalid locationID - {arrive}", file=sys.stderr )
+            continue
+
+        if not depart or depart > 265 or arrive < 1:
+            print( f"Invalid locationID - {depart}", file=sys.stderr )
+            continue
 
         airport = get_airport( depart, arrive )
         value = get_value( tip, total )
