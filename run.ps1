@@ -28,6 +28,18 @@ $env:RUN_NAME = "4 mappers - mapper encode - sort reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python splitter.py -m 4 < log.jsonl"
 
+$env:RUN_NAME = "1 mappers - mapper encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 1 --dict < log.jsonl"
+
+$env:RUN_NAME = "2 mappers - mapper encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 2 --dict < log.jsonl"
+
+$env:RUN_NAME = "4 mappers - mapper encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 4 --dict < log.jsonl"
+
 
 $env:MAPPER_ENCODE = "False"
 
@@ -54,6 +66,21 @@ cmd /c "python splitter.py -m 4 < log.jsonl"
 $env:RUN_NAME = "4 mappers - reducer encode - dict reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python splitter.py -m 4 --dict < log.jsonl"
+
+$env:RUN_NAME = "1 mappers - reducer encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 1 --dict < log.jsonl"
+
+$env:RUN_NAME = "2 mappers - reducer encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 2 --dict < log.jsonl"
+
+$env:RUN_NAME = "4 mappers - reducer encode - dict reduce"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+cmd /c "python splitter.py -m 4 --dict < log.jsonl"
+
+
+
 
 $env:RUN_NAME = "pyspark"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
