@@ -79,13 +79,6 @@ $env:RUN_NAME = "4 mappers - reducer encode - dict reduce"
 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
 cmd /c "python splitter.py -m 4 --dict < log.jsonl"
 
-
-
-
-$env:RUN_NAME = "pyspark"
-Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
-python pyspark_mapreduce.py
-
 # Clean up environment variable
 Remove-Item Env:RUN_NAME
 Remove-Item Env:MAPPER_ENCODE
