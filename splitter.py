@@ -13,13 +13,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--dict",
+    "-d", "--dict",
     action="store_true",
     help="Use dictionary-based reducer"
 )
 
 parser.add_argument(
-    "--combiner",
+    "-c", "--combiner",
     action="store_true",
     help="Use a combiner for each mapper"
 )
@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 mapper_count = args.mappers
 output_batch = 5000
-input_batch = 5000
+input_batch = 500
 reducer_dict = args.dict
 use_combiner = args.combiner
 

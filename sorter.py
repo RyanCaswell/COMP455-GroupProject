@@ -2,7 +2,6 @@ import tracker
 tracker.track( "sorter" )
 
 import sys
-from operator import itemgetter
 
 lines = list( sys.stdin )    # reads through the counter, one line at a time
 

@@ -58,7 +58,7 @@ for line in sys.stdin:
             print( f"Invalid hour - {hour}", file=sys.stderr )
             hour = None
 
-        if MAPPER_ENCODE:
+        if MAPPER_ENCODE and hour is not None:
             hour = BUCKETS[hour]
 
         depart = int( data[1] )
@@ -76,9 +76,9 @@ for line in sys.stdin:
         airport = get_airport( depart, arrive )
         value = get_value( tip, total )
 
-        if airport:
+        if airport is not None:
             print( f"{airport}\t{tip}|{total}" )
-        if hour:
+        if hour is not None:
             print( f"T|{hour}\t{tip}|{total}" )
 
     except ( TypeError, ValueError ) as e:

@@ -36,7 +36,8 @@ def print_output( key, tip, total ):
             key = f"B|{depart}|{arrive}"
 
         elif code == "A" or code == "D":
-            key = f"{code}|{AIRPORT_NAMES.get( parts[1] )}"
+            airport = AIRPORT_NAMES.get( int( parts[1] ) )
+            key = f"{code}|{airport}"
 
         else:
             raise ValueError( f"Unexpected key format: {key!r}" )
