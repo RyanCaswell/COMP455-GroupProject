@@ -27,16 +27,16 @@ foreach ( $mapperEncode in $true, $false ) {
     $env:MAPPER_ENCODE = if ( $mapperEncode ) { "True" } else { "False" }
     $encodeLabel = if ( $mapperEncode ) { "map encode" } else { "reduce encode" }
 
-    forech ( $combiner in $false, $true ) {
+    foreach ( $combiner in $false, $true ) {
         $combinerLabel = if ( $combiner ) { "combine" } else { "no combine" }
 
-        foreach ( $sortReduce ) {
+        foreach ( $sortReduce in $false, $true ) {
             $reduceLabel = if ( $sortReduce ) { "sort reduce" } else { "dict reduce"}
 
             foreach ( $n in $mapperCounts ) {
                 $mapperLabel = if ( $n -eq 0 ) { "single mapper" } else { "$n mapper" }
 
-                $env:RUN_NAME "$mapperLabel - $combinerLabel - $encodeLabel - $reducerLabel"
+                $env:RUN_NAME = "$mapperLabel - $combinerLabel - $encodeLabel - $reduceLabel"
                 $cmd = Build-Cmd $n $combiner $sortReduce
 
                 Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
