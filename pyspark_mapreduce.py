@@ -1,6 +1,7 @@
 import tracker
 import time
 import json
+import os
 import urllib.request
 
 from pathlib import Path
@@ -152,9 +153,34 @@ results = sorted(
 
 # Results
 
+output_bytes = 0
+
 for row in results:
     average = row["tip"] / row["total"]
-    print(f"{row['key']},{average:.1%}")
+    line = f"{row['key']},{average:.1%}\n"
+    output_bytes += len(line.encode("utf-8"))
+    print(line, end="")
+
+
+def record_summary(bytes_in, bytes_out, start, end):
+    path = Path("metrics_summary_final.csv")
+    seconds = end - start
+    run_name = os.environ.get("RUN_NAME", "pyspark")
+    row = (
+        f"{run_name},pyspark,1,{bytes_in},{bytes_out},"
+        f"{start},{end},{seconds:.3f},0.0,{seconds:.1f}"
+    )
+
+    if path.exists():
+        text = path.read_text()
+        newline = "\r\n" if "\r\n" in text else "\n"
+        lines = [line for line in text.splitlines() if line.split(",", 1)[0] != run_name]
+    else:
+        newline = "\n"
+        lines = ["run,stage,procs,bytes_in,bytes_out,start,end,seconds,t_start,t_end"]
+
+    lines.append(row)
+    path.write_text(newline.join(lines) + newline)
 
 
 # Benchmark 
@@ -165,7 +191,9 @@ metrics_tracker["add_input"](input_bytes)
 
 spark.stop()
 
-execution_time = time.time() - start_time
+end_time = time.time()
+execution_time = end_time - start_time
+record_summary(input_bytes, output_bytes, start_time, end_time)
 
 
 # Print Out

@@ -47,6 +47,10 @@ foreach ( $mapperEncode in $true, $false ) {
     }
 }
 
+$env:RUN_NAME = "pyspark"
+Write-Host "`n===== Running $env:RUN_NAME =====" -ForegroundColor Cyan
+python pyspark_mapreduce.py
+
 # Clean up environment variable
 Remove-Item Env:RUN_NAME
 Remove-Item Env:MAPPER_ENCODE
