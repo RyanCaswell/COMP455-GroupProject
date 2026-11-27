@@ -8,14 +8,23 @@ import argparse
 from encode import BUCKETS, AIRPORT_NAMES
 
 parser = argparse.ArgumentParser()
+
 parser.add_argument(
     "--dict",
     action="store_true",
     help="Use flag to start with an in-memory dictionary (input need not be sorted/ no sort stage)",
 )
+
+parser.add_argument(
+    "-j", "--join",
+    choices=["map", "reduce"],
+    default="map",
+    help="Which side performs the join",
+)
+
 args = parser.parse_args()
 
-MAPPER_ENCODE = os.environ.get( "MAPPER_ENCODE", "True" ) == "True"
+MAPPER_ENCODE = ( args.join == "map" )
 
 def print_output( key, tip, total ):
     average = tip / total

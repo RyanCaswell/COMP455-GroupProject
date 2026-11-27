@@ -24,6 +24,13 @@ parser.add_argument(
     help="Use a combiner for each mapper"
 )
 
+parser.add_argument(
+    "-j", "--join",
+    choices=["map", "reduce"],
+    default="map",
+    help="Which side performs the join",
+)
+
 args = parser.parse_args()
 
 mapper_count = args.mappers
@@ -32,18 +39,10 @@ input_batch = 500
 reducer_dict = args.dict
 use_combiner = args.combiner
 
-# Start Sorter
-if reducer_dict:
-    sorter = None
+# Start sorter if needed
+sorter = None
 
-    # Start Reducer
-    reducer = subprocess.Popen(
-        [sys.executable, "reducer.py", "--dict"],
-        stdin=subprocess.PIPE,
-        text=True
-    )
-
-else:
+if not args.dict:
     sorter = subprocess.Popen(
         [sys.executable, "sorter.py"],
         stdin=subprocess.PIPE,
@@ -51,19 +50,27 @@ else:
         text=True
     )
 
-    # Start Reducer
-    reducer = subprocess.Popen(
-        [sys.executable, "reducer.py"],
-        stdin=sorter.stdout,
-        text=True
-    )
+# Start Reducer
+reduce_args = [ "--join", args.join ]
+map_args = [ "--join", args.join ]
 
+if args.dict:
+    reduce_args.append( "--dict" )
+
+reducer = subprocess.Popen(
+    [sys.executable, "reducer.py"] + reduce_args,
+    stdin=sorter.stdout if sorter else subprocess.PIPE,
+    text=True
+)
+
+# Close stdout of sorter if it exists
+if sorter:
     sorter.stdout.close()
 
 # Start Mappers
 mappers = [
     subprocess.Popen(
-        [sys.executable, "mapper.py"],
+        [sys.executable, "mapper.py"] + map_args,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         text=True

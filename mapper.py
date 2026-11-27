@@ -3,10 +3,22 @@ tracker.track( "mapper" )
 
 import sys
 import os
+import argparse
 
 from encode import BUCKETS, AIRPORT_NAMES
 
-MAPPER_ENCODE = os.environ.get( "MAPPER_ENCODE", "True" ) == "True"
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "-j", "--join",
+    choices=["map", "reduce"],
+    default="map",
+    help="Which side performs the join",
+)
+
+args = parser.parse_args()
+
+MAPPER_ENCODE = ( args.join == "map" )
 
 def get_airport( depart, arrive ):
     # Check if an airport
@@ -77,9 +89,9 @@ for line in sys.stdin:
         value = get_value( tip, total )
 
         if airport is not None:
-            print( f"{airport}\t{tip}|{total}" )
+            print( f"{airport}\t{value}" )
         if hour is not None:
-            print( f"T|{hour}\t{tip}|{total}" )
+            print( f"T|{hour}\t{value}" )
 
     except ( TypeError, ValueError ) as e:
         print( f"Error reading CSV - {e}", file=sys.stderr )
