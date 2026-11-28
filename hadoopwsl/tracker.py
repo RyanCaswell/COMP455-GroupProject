@@ -5,7 +5,7 @@ import sys
 import time
 from pathlib import Path
 
-LOG_PATH = Path( "metrics.json" )
+LOG_PATH = Path( os.environ.get( "METRICS_PATH", "metrics.json" ) )
 
 RUN_NAME = os.environ.get( "RUN_NAME", "default" )
 
