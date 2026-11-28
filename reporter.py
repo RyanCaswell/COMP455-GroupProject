@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_json( "metrics.json", lines=True )
+df = pd.read_json( "data/metrics.json", lines=True )
 
 stages = df.groupby( [ "run", "stage" ] ).agg(
     procs=( "stage", "size" ),
@@ -16,7 +16,7 @@ stages["t_start"] = ( stages["start"] - runStart ).round( 1 )
 stages["t_end"] = ( stages["end"] - runStart ).round( 1 )
 stages = stages.sort_values( [ "run", "start" ] )
 
-stages.to_csv( "metrics_summary.csv", index=False )
+stages.to_csv( "data/metrics_summary.csv", index=False )
 
 print( stages[ [ "run", "stage", "procs", "bytes_in", "bytes_out", "seconds", "t_start", "t_end" ] ].to_string( index=False, formatters={ "bytes_in": "{:,}".format, "bytes_out": "{:,}".format } ) )
 
